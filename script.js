@@ -348,16 +348,54 @@ class Account {
     (this.owner = owner),
       (this.currency = currency),
       (this.pin = pin),
-      (this.movements = []),
+      //! using 'underscore'!
+      //! this is called 'protected data'
+      //! this is used in developer to protect data
+      //! Developers agreed to do it. so, when you will use it, the developers will know not to touch it
+      (this._movements = []),
       //! we can do this means we can create new things
       (this.locale = navigator.language);
 
     console.log(` Thanks for opening an account, ${owner}`);
   }
+
+  //PUBLIC INTERFACE
+
+  getMovements() {
+    return this._movements;
+  }
+  deposit(val) {
+    this._movements.push(val);
+  }
+
+  withdraw(val) {
+    this.deposit(-val);
+  }
+  //! we used function in a function
+
+  approveLoan(val) {
+    return true;
+  }
+
+  requestLoan(val) {
+    if (this.approveLoan(val)) {
+      this.deposit(val);
+      console.log("Loan approved");
+    }
+  }
 }
 
 const acc1 = new Account("Jonas", "EUR", 1111);
 console.log(acc1);
-acc1.movements.push(250);
-acc1.movements.push(-140);
+acc1._movements.push(250);
+acc1._movements.push(-140);
 console.log(acc1);
+
+acc1.deposit(250);
+acc1.withdraw(140);
+
+console.log(acc1.pin);
+console.log(acc1.getMovements());
+
+acc1.requestLoan(1000);
+acc1.approveLoan(1000);
