@@ -149,6 +149,7 @@ class PersonCl {
 }
 
 PersonCl.hey();
+
 const jessica = new PersonCl("jessica Davis", 1996);
 
 console.log(jessica);
@@ -206,3 +207,157 @@ Person.hey = function () {
 // ? you will call it like this
 
 Person.hey();
+
+// There is a 3rd way of creating an object
+
+const PersonProto = {
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+const steven = Object.create(PersonProto);
+console.log(steven);
+steven.name = "Steven";
+steven.birthYear = 2002;
+//* adding this is a little bit weird
+//* this was written like this because 'init' waas not written first
+
+steven.calcAge();
+
+console.log(steven.__proto__ === PersonProto);
+
+//* Now we will use init to make it a little bit shorter
+
+const sarah = Object.create(PersonProto);
+sarah.init("Sarah", 1979);
+//* Now this is not weird and we are doing this in just one line
+sarah.calcAge();
+
+//? Now we will make a child class of the parent class
+
+const Student = function (firstName, birthYear, course) {
+  // this.firstName = firstName;
+  // this.birthYear = birthYear;
+  //We could use this .. but this means we are repeating ourselves
+  //* so the better idea is.. to call the person class
+  // ! Person(firstName,birthYear)
+  //* but this method will not work either. So what we have to do is
+
+  Person.call(this, firstName, birthYear);
+
+  this.course = course;
+};
+
+//Linking prototype
+
+Student.prototype = Object.create(Person.prototype);
+
+const mike = new Student("Mike", 2020, "Computer Science");
+console.log(mike);
+// You will see new object was created
+
+Student.prototype.introduce = function () {
+  console.log(`My name is ${this.firstName} and I study ${this.course}`);
+};
+
+mike.introduce();
+mike.calcAge();
+
+console.log(mike.__proto__);
+console.log(mike.__proto__.__proto__);
+
+console.log(mike instanceof Student);
+//> true
+console.log(mike instanceof Person);
+//> true
+console.log(mike instanceof Object);
+//> true
+
+Student.prototype.constructor = Student;
+console.dir(Student.prototype.constructor);
+
+// class StudentCl extends PersonCl {
+//   // constructor(fullName, birthYear, course) {
+//   //Always needs to happen first
+//   // super(fullName,birthYear);
+//   // this.course = course
+//   // }
+// }
+
+// const martha = new StudentCl("Martha Jones", 2012);
+//this system will work
+
+class StudentCl extends PersonCl {
+  constructor(fullName, birthYear, course) {
+    // Always needs to happen first
+    super(fullName, birthYear);
+    this.course = course;
+  }
+
+  introduce() {
+    console.log(`My name is ${this.fullName} and I study ${this.course}`);
+  }
+
+  calcAge() {
+    console.log(
+      `I'm ${
+        2037 - this.birthYear
+      } years old, but as a student I feel more like ${
+        2037 - this.birthYear + 10
+      } `
+    );
+  }
+  //! this will overwrite the previous 'calcAge' method.
+  //! If we write it like this
+}
+
+const martha = new StudentCl("Martha Jones", 2012, "Computer Science");
+console.log(martha);
+
+console.log(martha);
+martha.introduce();
+martha.calcAge();
+
+const StudentProto = Object.create(PersonProto);
+StudentProto.init = function (firstName, birthYear, course) {
+  PersonProto.init.call(this, firstName, birthYear);
+  this.course = course;
+};
+
+StudentProto.introduce = function () {
+  console.log(`My name is ${this.fullName} and I study ${this.course}`);
+};
+const jayy = Object.create(StudentProto);
+//! 'studentproto' inherits from the PersonProto
+//! 'jay' inherits from the  'studentproto'
+//! so indirectly jay inherits from the Person proto
+//! It means they are in a chain
+jayy.init("Jay", 2010, "Computer Science");
+console.log(jayy);
+
+jayy.introduce();
+
+class Account {
+  constructor(owner, currency, pin) {
+    (this.owner = owner),
+      (this.currency = currency),
+      (this.pin = pin),
+      (this.movements = []),
+      //! we can do this means we can create new things
+      (this.locale = navigator.language);
+
+    console.log(` Thanks for opening an account, ${owner}`);
+  }
+}
+
+const acc1 = new Account("Jonas", "EUR", 1111);
+console.log(acc1);
+acc1.movements.push(250);
+acc1.movements.push(-140);
+console.log(acc1);
