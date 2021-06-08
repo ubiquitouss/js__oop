@@ -123,7 +123,7 @@ class PersonCl {
   greet() {
     console.log(`Hey ${this.firstName}`);
   }
-
+//   getters are used to access a property from a constructor or function
   get age() {
     return 2037 - this.birthYear;
   }
@@ -132,7 +132,8 @@ class PersonCl {
     console.log("Hey there!");
     console.log(this);
   }
-
+ 
+  //setters are used to change(mutate) a property from a constructor or function
   set fullName(name) {
     console.log(name);
 
@@ -304,7 +305,7 @@ class StudentCl extends PersonCl {
     console.log(`My name is ${this.fullName} and I study ${this.course}`);
   }
 
-  calcAge() {
+  calcAge() {in
     console.log(
       `I'm ${
         2037 - this.birthYear
